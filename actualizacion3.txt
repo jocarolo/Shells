@@ -1,4 +1,4 @@
-unction ConvertFrom-ByteArray {
+function ConvertFrom-ByteArray {
 
     Param (
         [Parameter(Position = 0, ValueFromPipeline = $True)]
